@@ -8,7 +8,23 @@ This project aims to study climate related-hazards relevant for the renewable en
 1971-2000 (historical), 2036-2065 (mid-century) and 2071-2100 (end-centruy) Two types of compound events can be assessed: cold-dry temporally compounding events 
 and low solar-low wind multivariate events. 
 
-#**DATA**
-This project uses EURO-CORDEX and ERA5 data. Global climate models - regional climate model combinations are taken from Antonini et al., 2024 and Climate in Norway 2100 report. 
-Here, several climate variables are needed: tasmin, 
+#**Badges**
 
+#**Visuals**
+
+#**Installation**
+
+#**Usage**
+
+#**SUPPORT**
+If you need any help or information, please contact: camilledeciron@orange.fr
+
+#**Roadmap**
+
+#**Contributing**
+
+#**Authors and acknowledgment**
+
+#**License**
+
+#**Project status**
