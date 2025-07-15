@@ -48,10 +48,12 @@ Input: climate variables files, 2 at the same time
 
 2) <ins>Cold-dry events</ins>
 _This script allow the calculation of the probability of a compound event to occur and provides a hypotheses test to assess the significance of the obtained results_
+
 <ins>Input</ins>: tasmin_pr CSVs
 
 3) <ins>Dark doldrums</ins>
 _This script allows the calculation of the probability of a dark doldrum to occur and provides a hypotheses test to assess the significance of the obtained results_
+
 <ins>Input</ins>: sfcwind and rsds CSVs
 
 
