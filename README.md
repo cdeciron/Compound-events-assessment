@@ -30,7 +30,6 @@ Global climate models - regional climate models were chosen according _Antonini 
 - MPI-M-MPI-ESM-LR - ITCP-RegCM4-6
 - MIROC-MIROC5 - CLM-CCLM-CLMcom4-8-17
 - ICHEC-EC-EARTH - DMI-HIRHAM5
-- ICHEC-EC-EARTH - DMI-HIRHAM5v2
 - ICHEC-EC-EARTH - SMHI-RCA4
 - NorESM1-M - SMHI-RCA4
 - NorESM1-M - GERICS-REMO2015
@@ -38,6 +37,9 @@ Global climate models - regional climate models were chosen according _Antonini 
 - HadGEM-2 - SMHI-RCA4
 - MPI-M-MPI-ESM-LR - CLM-CCLM-CLMcom4-8-17
 - MPI-M-MPI-ESM-LR - GERICS-REMO2015
+
+## Data storage and folder structure
+A .zip file is included in this project and it is crucial to download it as it follows the exact same folder structure as used in the scripts. You will find also geospatial data/shapefiles for norway and its electricity price regions. 
 
 # Scripts
 The project consists in several scripts, each being essential to assess the probbaility of compound events as previously described in the introduction. 
