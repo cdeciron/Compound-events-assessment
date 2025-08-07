@@ -35,7 +35,7 @@ Global climate models - regional climate models were chosen according _Antonini 
 - MPI-M-MPI-ESM-LR - GERICS-REMO2015
 
 ## Data storage and folder structure
-A .zip file is included in this project and it is crucial to download it as it follows the exact same folder structure as used in the scripts. You will find also geospatial data/shapefiles for norway and its electricity price regions. 
+In the 'Releases' tab, you will find a .zip file. It is crucial to download it as it follows the exact same folder structure as used in the scripts. You will find also geospatial data/shapefiles for norway and its electricity price regions. 
 
 # Scripts
 The project consists in several scripts, each being essential to assess the probability of compound events as previously described in the introduction. 
