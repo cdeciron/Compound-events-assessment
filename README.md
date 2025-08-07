@@ -3,14 +3,10 @@ This project aims to study climate related-hazards relevant for the renewable en
 
 # Definition of climate hazards and compound events 
 ## Cold-dry events
-A cold spell is when at least 5 days where the minimum temperature is below the 10th percentile of the time serie 
-Dry spells are defined based on the standardized precipitation evapotranspiration index (SPEI) (_Thornwaite48_)
-A temporally compounding cold-dry event is considered when summer months are relatively drier than average and winter displays cold spells. 
+Cold-dry events are studied as temporally compounding events. The dryness of a year/month is assessed with the SPEI and the coldness of a year is assessed by comparison to the average of the time period. Dryness is assessed for 'summer' months (May, June, july, August, September) and coldness for 'winter' months (October, November, December, January, Février). To assess cold-dry events, the climate variables used are: tasmin, tas and pr. 
 
 ## Dark doldrums 
-A low wind spell is when 100m wind speed is below 3m/s for at least 5 days
-A dark spell is when surface solar radiation downwards (rsds) is below 200W/m<sup>2</sup>
-A dark doldrum is the co-occurence of these two events for at least 1 day in the same region 
+A low wind spell is when 100m wind speed is below 4m/s for at least 5 days. A dark spell is when surface solar radiation downwards (rsds) does not exceed 200W/m<sup>2</sup> at least twice in the day for 5 days. A dark doldrum is the co-occurence of these two events for at least 1 day in the same region. 
 
 # Data
 ## Climate variables
@@ -42,13 +38,14 @@ Global climate models - regional climate models were chosen according _Antonini 
 A .zip file is included in this project and it is crucial to download it as it follows the exact same folder structure as used in the scripts. You will find also geospatial data/shapefiles for norway and its electricity price regions. 
 
 # Scripts
-The project consists in several scripts, each being essential to assess the probbaility of compound events as previously described in the introduction. 
+The project consists in several scripts, each being essential to assess the probability of compound events as previously described in the introduction. 
 
 1) <ins>File loading</ins>
-_The script 'file loading' allows a preprocessing of the data: unit conversion, data clipping on shapefiles, regional averaging, exportation of the data as a csv file_
-Input: climate variables files, 2 at the same time
+The script 'file loading' allows a preprocessing of the data: unit conversion, data clipping on shapefiles, regional averaging, exportation of the data as a csv file
 
-2) <ins>Cold-dry events</ins>
+<ins>Input:</ins> climate variables files, 2 at the same time
+
+3) <ins>Cold-dry events</ins>
 _This script allow the calculation of the probability of a compound event to occur and provides a hypotheses test to assess the significance of the obtained results_
 
 <ins>Input</ins>: tasmin_pr CSVs
