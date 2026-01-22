@@ -54,24 +54,23 @@ end_period_dates = {
 # In[ ]:
 
 
-#Path to file buildup with help of variables 
-
 #Path to file buildup with help of variables (refer to folders structure figure)
 location = 'Volumes'
 disk = 'LaCie 1'
 folder = 'Compound_events_study_folder'
 subfolder = 'Climate_models_data'
-gcm_rcm_folder = 'NorESM1_M_DMI_HIRHAM5' #depending on the gcm-rcm combination you are using here 
+gcm_rcm_folder = 'CNRM_CERFACS_CNRM_CM5_CNRM_ALADIN63' #depending on the gcm-rcm combination you are using here 
 subfolder_2 = 'Climate_raw_data'
+scenario_name = 'RCP45'
 variable_folder = 'Wind'
-input_path = f'/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/{subfolder_2}/{variable_folder}'
+input_path = f'/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/{subfolder_2}/{scenario_name}/{variable_folder}'
 output_path = f'/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/Post_processed_data/sfc_wind'
 
 #RIP nomenclature of the GCM-RCM combination
 rNi1p1 = 'r1i1p1' #'r1i1p1' or 'r2ip1' or 'r3ip1' or 'r2ip1'
 
 #Version number
-v_number = 'v3' #'v1' or 'v2'; in file name
+v_number = 'v2' #'v1' or 'v2'; in file name
 
 #Temporal resolution of the data 
 time_resol = 'day' 
@@ -92,20 +91,20 @@ variables = {
 ##Climate model combinations
 ###Global climate models
 GCM = {
-    #'CNRM': 'CNRM-CERFACS-CNRM-CM5',
+    'CNRM': 'CNRM-CERFACS-CNRM-CM5',
     #'MPI': 'MPI-M-MPI-ESM-LR', 
     #'MIROC': 'MIROC-MIROC5',
     #'EcEarth': 'ICHEC-EC-EARTH',
-    'NorESM': 'NCC-NorESM1-M'
+    #'NorESM': 'NCC-NorESM1-M'
     #'HadGEM': 'HadGEM-2'
     #'MPI': 'MPI-M-MPI-ESM-LR'
 }
 ###Regional climate models
 RCM = {
-    #'R_CNRM':  'CNRM-ALADIN63',
+    'R_CNRM':  'CNRM-ALADIN63',
     #'ITCP': 'ICTP-RegCM4-6',
     #'CLM': 'CLMcom-CCLM4-8-17'
-    'HIRHAM': 'DMI-HIRHAM5'
+    #'HIRHAM': 'DMI-HIRHAM5'
     #'RCA': 'SMHI-RCA4'
     #'REMO2015': 'GERICS-REMO2015'
 }
@@ -119,7 +118,7 @@ period_dates = {
 ###Scenarios
 scenario = {
     'hist': 'historical', 
-    'RCP': 'rcp85'
+    'RCP': scenario
 }
 
 
@@ -143,10 +142,10 @@ def generate_file_paths(var_key):
     for gcm_key, gcm_val in GCM.items():
         for rcm_key, rcm_val in RCM.items():
             for period_type, period_dict in period_dates.items():
-                scen = scenario['hist'] if period_type == 'hist' else scenario['RCP']
+                scen = scenario['hist'] if period_type == 'hist' else 'RCP45'
                 for date_range in period_dict.values():
                     file_path = (
-                        f"/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/Climate_raw_data/{variable_folder}/"
+                        f"/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/Climate_raw_data/RCP45/{variable_folder}/"
                        f"{var_code}_EUR-11_{gcm_val}_{scen}_{rNi1p1}_{rcm_val}_{v_number}_{time_resol}_{date_range}.nc"
                     )
                     #File path is registered in lists for periods 
@@ -332,7 +331,7 @@ def compute_regional_means(ds, shapes):
     for i, name in enumerate(shapes.keys()):
         region_mask = mask_3d.isel(region=i)
         masked_data = ds.sfcWind.where(region_mask)
-        regional_mean = masked_data.mean(dim=("rlon", "rlat"), skipna=True)
+        regional_mean = masked_data.mean(dim=("y", "x"), skipna=True)
         df[name] = regional_mean.compute().values
 
     return df
@@ -342,15 +341,21 @@ def compute_regional_means(ds, shapes):
 
 
 # ===== Run and save CSVs =====
-output_dir = f"/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/Post_processed_data/sfc_wind/"
+output_dir = f"/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/Post_processed_data/sfc_wind/{scenario_name}/"
 os.makedirs(output_dir, exist_ok=True)
 
 for period, ds in wind_datasets.items():
     print(f"Processing {period}...")
     df = compute_regional_means(ds, shapes)
-    output_path = os.path.join(output_dir, f"regional_mean_wind_{period}.csv")
+    output_path = os.path.join(output_dir, f"regional_mean_wind_{period}_{scenario_name}.csv")
     df.to_csv(output_path)
     print(f"Saved: {output_path}")
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

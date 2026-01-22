@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[32]:
 
 
 #Packages
@@ -13,7 +13,7 @@ import seaborn as sns
 import warnings
 
 
-# In[ ]:
+# In[33]:
 
 
 #Imput variables to find the path to your files
@@ -23,14 +23,14 @@ folder = 'Compound_events_study_folder'
 subfolder = 'Climate_models_data'
 gcm_rcm_folder = 'CNRM_CERFACS_CNRM_CM5_CNRM_ALADIN63' #depending on the gcm-rcm combination you are using here 
 subfolder_2 = 'Post_processed_data'
-scen = 'RCP26'
+scen = 'RCP45'
 input_path = f'/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/{subfolder_2}'
 
 #Customizable path to where you want to store your results
 output_path = f'/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/Figures/Dark_doldrums/Bootstrap'
 
 
-# In[ ]:
+# In[34]:
 
 
 #Dictionnaries to find the csv files for all periods and for both variables
@@ -46,7 +46,7 @@ variable_list = {
 }
 
 
-# In[ ]:
+# In[35]:
 
 
 #Convert 10m height wind to 100m height wind according to the power law 
@@ -66,7 +66,7 @@ def power_law(wind_df):
     return df_wind_100m
 
 
-# In[ ]:
+# In[36]:
 
 
 #Function to detect dark days: rsds > 200W/m2 zero or once in one day
@@ -92,7 +92,7 @@ def label_dark_light_days(solar_series, solar_thresh=200):
     warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-# In[ ]:
+# In[91]:
 
 
 #Pre-processing the csv files: merge wind and solar data on daily basis and keeping data only for winter months
@@ -100,7 +100,7 @@ merged_daily_dict = {}  # Final output per period
 
 for period_key, period_code in period_names.items():
     # Load solar data and change the name of the columns
-    solar_path = f"{input_path}/rsds/{scen}/regional_mean_rsds_{period_key}.csv"
+    solar_path = f"{input_path}/rsds/{scen}/regional_mean_rsds_{period_key}_{scen}.csv"
     solar_df = pd.read_csv(solar_path, index_col=0, parse_dates=True)
     solar_df = solar_df.rename(columns={zone: f"{zone}_solar" for zone in solar_df.columns})
 
@@ -131,7 +131,7 @@ for period_key, period_code in period_names.items():
     merged_daily_dict[period_code] = merged_df
 
 
-# In[ ]:
+# In[92]:
 
 
 #Function for compound events 
@@ -226,7 +226,7 @@ def compound_events(df, wind_thresh=4, min_spell_length=5):
     )
 
 
-# In[ ]:
+# In[93]:
 
 
 def mean_dark_spell_length(series):
@@ -247,7 +247,7 @@ def mean_dark_spell_length(series):
         return round(dark_lengths.mean(),0)
 
 
-# In[ ]:
+# In[94]:
 
 
 # In 30 years of winter = 5400 
@@ -257,7 +257,7 @@ def number_dark_days(period, region):
     print(f"Number of dark days in {region}:", num_dark_region_period)
 
 
-# In[ ]:
+# In[95]:
 
 
 def average_spell_length(period, region):
@@ -265,7 +265,7 @@ def average_spell_length(period, region):
     print(f"Mean dark spell length in {region}:", mean_len_region, 'days')
 
 
-# In[ ]:
+# In[96]:
 
 
 number_dark_days('historical', 'NO1')
@@ -275,26 +275,26 @@ number_dark_days('historical', 'NO4')
 number_dark_days('historical', 'NO5')
 
 
-# In[ ]:
+# In[97]:
 
 
 #Results for number of hazards and compound events for all periods
 low_wind_count_hist, dark_days_count_hist, prob_hist, ce_count_hist, df_hist = compound_events(merged_daily_dict['historical'])
 
 
-# In[ ]:
+# In[98]:
 
 
 low_wind_count_mid, dark_days_count_mid, prob_mid, ce_count_mid, df_mid = compound_events(merged_daily_dict['mid-century'])
 
 
-# In[ ]:
+# In[99]:
 
 
 low_wind_count_end, dark_days_count_end, prob_end, ce_count_end, df_end = compound_events(merged_daily_dict['end-century'])
 
 
-# In[ ]:
+# In[100]:
 
 
 #Function to bootstrap the 'CE_binary' columns. Sample w/replacement, 10000 times. Confidence interval estimation
@@ -317,25 +317,25 @@ def hypotheses_test_binary(df, n_bootstrap=1000):
     return bootstrapped_df
 
 
-# In[ ]:
+# In[101]:
 
 
 boostrapped_hist = hypotheses_test_binary(df_hist, 1000)
 
 
-# In[ ]:
+# In[102]:
 
 
 boostrapped_mid = hypotheses_test_binary(df_mid, 1000)
 
 
-# In[ ]:
+# In[103]:
 
 
 boostrapped_end = hypotheses_test_binary(df_end, 1000)
 
 
-# In[ ]:
+# In[104]:
 
 
 bootstrapped_results = {
@@ -345,7 +345,7 @@ bootstrapped_results = {
 }
 
 
-# In[ ]:
+# In[105]:
 
 
 # Set Seaborn style
@@ -389,7 +389,7 @@ for region in regions:
         # Threshold line
         plt.axvline(thresholds[period][region], color=period_colors[period], linestyle='--', linewidth=2)
 
-    plt.title(f'Bootstrap distribution of the number of dark doldrum days - Region {region}')
+    plt.title(f'Bootstrap distribution of the number of dark doldrum days in {region} - {scen}')
     #plt.suptitle(f'{scen}')#, fontsize = 20, x = 0.5, y = 0.995) 
     plt.xlabel('Number of dark doldrums ')
     plt.ylabel('Frequency')
@@ -401,6 +401,12 @@ for region in regions:
     plt.savefig(f'{output_path}/{region}_CE_Bootstrap_{scen}.png', dpi=300)
     plt.show()
    
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

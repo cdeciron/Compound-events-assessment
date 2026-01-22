@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[2]:
 
 
 #Basic packages
@@ -25,19 +25,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-# In[ ]:
+# In[3]:
 
 
 # Time periods as written in file names from the CDS EURO-CORDEX data 
 ## i is the number of files corresponding to a period. If 1 file=1 year then i=30. If 1 file=5 years, i=5
 n = 1 #usually 1 or 5, number of years contained in one file 
 x = 0 #usually 0 or 4
-
-### Historical periods
-hist_period_dates = {
-    f"{1971 + i*n}_hist": f"{1971 + i*n}01010130-{1971 + i*n + x}12312230"
-    for i in range(30) #6 or 30 years
-}
 
 ### Mid-century periods
 mid_period_dates = {
@@ -52,7 +46,7 @@ end_period_dates = {
 }
 
 
-# In[ ]:
+# In[34]:
 
 
 #Path to file buildup with help of variables (refer to folders structure figure)
@@ -60,8 +54,9 @@ location = 'Volumes'
 disk = 'LaCie 1'
 folder = 'Compound_events_study_folder'
 subfolder = 'Climate_models_data'
-gcm_rcm_folder = 'NorESM1_M_SMHI_RCA4' #depending on the gcm-rcm combination you are using here 
+gcm_rcm_folder = 'CNRM_CERFACS_CNRM_CM5_CNRM_ALADIN63' #depending on the gcm-rcm combination you are using here 
 variable_folder = 'Solar'
+scenario = 'RCP26'
 
 #Variables that will later be used to find the files on your computer. 
 #For the following information, refer to the name of the files downloaded from CDS
@@ -73,7 +68,7 @@ v_number = 'v1' #'v1' or 'v2'; in file name
 time_resol = '3hr' #time resolution of the data as wrote in the file name 
 
 
-# In[ ]:
+# In[36]:
 
 
 # Set up dictionnaries for folders and files names 
@@ -88,28 +83,27 @@ variables = {
 ##Climate model combinations
 ###Global climate models
 GCM = {
-    #'CNRM': 'CNRM-CERFACS-CNRM-CM5',
+    'CNRM': 'CNRM-CERFACS-CNRM-CM5',
     #'MPI': 'MPI-M-MPI-ESM-LR', 
     #'MIROC': 'MIROC-MIROC5',
     #'EcEarth': 'ICHEC-EC-EARTH',
-    'NorESM': 'NCC-NorESM1-M'
+    #'NorESM': 'NCC-NorESM1-M'
     #'HadGEM': 'HadGEM-2'
     #'MPI': 'MPI-M-MPI-ESM-LR'
 }
 
 ###Regional climate models
 RCM = {
-    #'R_CNRM':  'CNRM-ALADIN63',
+    'R_CNRM':  'CNRM-ALADIN63',
     #'ITCP': 'ICTP-RegCM4-6',
     #'CLM': 'CCLM-CLMcom4-8-17'
     #'HIRHAM': 'DMI-HIRHAM5'
-    'RCA': 'SMHI-RCA4'
+    #'RCA': 'SMHI-RCA4'
     #'REMO2015': 'GERICS-REMO2015'
 }
 
 ## Dates of the time periods previously defined 
 period_dates = {
-    'hist': hist_period_dates, 
     'mid': mid_period_dates, 
     'end': end_period_dates
     
@@ -117,90 +111,96 @@ period_dates = {
 
 ##Name of the time periods
 period_names = {
-    'hist': 'historical', 
     'mid': 'mid_century', 
     'end': 'end_century'
 }
 
 ##Scenarios
-scenario = {
-    'hist': 'historical', 
-    'RCP': 'rcp85'
+scenario_list = {
+    'RCP': scenario
 }
 
 periods_intervalls = {
-    "historical": ("1971-01-01", "2000-12-31"),
-    "near_future": ("2021-01-01", "2050-12-31"),
-    "far_future": ("2071-01-01", "2100-12-31")
+    "near_future": ("2021-01-01", "2050-12-30"),
+    "far_future": ("2071-01-01", "2100-12-3°")
 }
 
 
-# In[ ]:
+# In[38]:
 
 
 def generate_file_paths(var_key):
-    files = {'hist': [], 'mid': [], 'end': []}
+    """
+    Generates file paths for CORDEX RCP (mid and end century) data 
+    for the specified climate variable (e.g., 'solar' or 'wind').
+    """
 
+    # Initialize containers for both time periods
+    files = {'mid': [], 'end': []}
+
+    # --- Validate variable key ---
     if var_key not in variables:
         raise ValueError(f"Variable '{var_key}' not found in variables dictionary.")
 
     var_info = variables[var_key]
-    var_code = var_info['code']
-    folder_name = var_info['folder']
+    var_code = var_info['code']       # e.g., 'rsds' or 'sfcWind'
+    folder_name = var_info['folder']  # e.g., 'Solar' or 'Wind'
 
+    # --- Loop over GCM/RCM combinations and periods ---
     for gcm_key, gcm_val in GCM.items():
         for rcm_key, rcm_val in RCM.items():
             for period_type, period_dict in period_dates.items():
-                scen = scenario['hist'] if period_type == 'hist' else scenario['RCP']
 
+                # Identify RCP scenario name (example: 'rcp45' or 'rcp85')
+                scen = scenario_list.get('RCP', scenario)
+
+                # Iterate through each subperiod (label and date range)
                 for label, date_range in period_dict.items():
                     file_path = (
-                        f"/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/Climate_raw_data/{variable_folder}/"
-                       f"{var_code}_EUR-11_{gcm_val}_{scen}_{rNi1p1}_{rcm_val}_{v_number}_{time_resol}_{date_range}.nc"
+                        f"/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/"
+                        f"Climate_raw_data/{scen.upper()}/{folder_name}/"
+                        f"{var_code}_EUR-11_{gcm_val}_{scen}_r1i1p1_{rcm_val}_v2_{time_resol}_{date_range}.nc"
                     )
 
                     if os.path.exists(file_path):
                         files[period_type].append(file_path)
                     else:
-                        print(f"Missing: {file_path}")
+                        print(f"⚠️ Missing: {file_path}")
 
-    return files
+    return files  # make sure this is outside all loops
 
 
-# In[ ]:
+# In[40]:
 
 
 def create_solar_datasets_from_file_dict(file_dict):
     return {
-        "hist": xr.open_mfdataset(file_dict["hist"], combine="by_coords", decode_coords="all"),
         "mid":  xr.open_mfdataset(file_dict["mid"],  combine="by_coords", decode_coords="all"),
-        "end":  xr.open_mfdataset(file_dict["end"],  combine="by_coords", decode_coords="all"),
+        "end":  xr.open_mfdataset(file_dict["end"],  combine="by_coords", decode_coords="all")
     }
 
 
-# In[ ]:
+# In[42]:
 
 
 file_dict = generate_file_paths("solar") 
 
 solar_datasets = create_solar_datasets_from_file_dict(file_dict)
 
-solar_ds_hist = solar_datasets["hist"]
 solar_ds_mid  = solar_datasets["mid"]
 solar_ds_end  = solar_datasets["end"]
 
 
-# In[ ]:
+# In[43]:
 
 
 solar_datasets = {
-    'hist': xr.open_mfdataset(file_dict['hist'], chunks={'time': 100}),
     'mid':  xr.open_mfdataset(file_dict['mid'], chunks={'time': 100}),
     'end':  xr.open_mfdataset(file_dict['end'], chunks={'time': 100}),
 }
 
 
-# In[ ]:
+# In[44]:
 
 
 #Path to folder of shapefiles
@@ -233,7 +233,7 @@ RLON_MIN, RLAT_MIN = transformer.transform(bbox_no[1], bbox_no[0])
 RLON_MAX, RLAT_MAX = transformer.transform(bbox_no[3], bbox_no[2]) 
 
 
-# In[ ]:
+# In[45]:
 
 
 #Enter the file path to your shapefiles
@@ -256,7 +256,7 @@ bounding_boxes = {
 }
 
 
-# In[ ]:
+# In[46]:
 
 
 shapes = {}
@@ -269,7 +269,7 @@ for name, ds in solar_datasets.items():
     solar_datasets[name] = ds.rio.write_crs(crs_name)
 
 
-# In[ ]:
+# In[47]:
 
 
 def clip_dataset_with_bbox(ds, region_name, bounding_boxes):
@@ -309,7 +309,7 @@ def clip_dataset_with_bbox(ds, region_name, bounding_boxes):
         return None
 
 
-# In[ ]:
+# In[48]:
 
 
 sliced_by_region = {}
@@ -323,7 +323,7 @@ for period, ds in solar_datasets.items():
             print(f"✗ Failed to slice {period} for {region}")
 
 
-# In[ ]:
+# In[49]:
 
 
 #Clip the data on the shapefiles and compute the regional mean
@@ -342,23 +342,23 @@ def compute_regional_means(ds, shapes):
     for i, name in enumerate(shapes.keys()):
         region_mask = mask_3d.isel(region=i)
         masked_data = ds.rsds.where(region_mask)
-        regional_mean = masked_data.mean(dim=("rlon", "rlat"), skipna=True)
+        regional_mean = masked_data.mean(dim=("x", "y"), skipna=True)
         df[name] = regional_mean.compute().values
 
     return df
 
 
-# In[ ]:
+# In[50]:
 
 
 # ===== Run and save CSVs =====
-output_dir = f"/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/Post_processed_data/rsds_3h/"
+output_dir = f"/{location}/{disk}/{folder}/{subfolder}/{gcm_rcm_folder}/Post_processed_data/rsds/{scenario}"
 os.makedirs(output_dir, exist_ok=True)
 
 for period, ds in solar_datasets.items():
     print(f"Processing {period}...")
     df = compute_regional_means(ds, shapes)
-    output_path = os.path.join(output_dir, f"regional_mean_rsds_{period}.csv")
+    output_path = os.path.join(output_dir, f"regional_mean_rsds_{period}_{scenario}.csv")
     df.to_csv(output_path)
     print(f"Saved: {output_path}")
 
